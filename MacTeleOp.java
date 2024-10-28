@@ -7,7 +7,7 @@ import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 
 
-@TeleOp(name = "Mecanum Drive Testing")
+@TeleOp(name = "Mecanum & Rotate Drive Testing")
 public class MacTeleOp extends LinearOpMode {
 
     /* This constant is the number of encoder ticks for each degree of rotation of the arm.
@@ -71,6 +71,7 @@ public class MacTeleOp extends LinearOpMode {
         DcMotor backLeftMotor = hardwareMap.get(DcMotorEx.class, "leftBack");
         DcMotor frontRightMotor = hardwareMap.get(DcMotorEx.class, "rightFront");
         DcMotor backRightMotor = hardwareMap.get(DcMotorEx.class, "rightBack");
+        DcMotor RotateMotor = hardwareMap.get(DcMotorEx.class, "RotMot");
         //DcMotor armMotor = hardwareMap.get(DcMotor.class, "rota");
         //CRServo intake = hardwareMap.get(CRServo.class,"intake");
         //Servo wrist = hardwareMap.get(Servo.class,"wrist");
@@ -114,6 +115,7 @@ public class MacTeleOp extends LinearOpMode {
             double y = -gamepad1.left_stick_y; // Remember, Y stick value is reversed
             double x = gamepad1.left_stick_x * 0.8; // Counteract imperfect strafing
             double rx = gamepad1.right_stick_x * 0.5;
+            double roty = gamepad2.left_stick_y * 0.4;
 
             // Denominator is the largest motor power (absolute value) or 1
             // This ensures all the powers maintain the same ratio,
@@ -140,10 +142,19 @@ public class MacTeleOp extends LinearOpMode {
                 wrist.setPosition((WRIST_FOLDED_OUT));
             }*/
 
+            RotateMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+
             frontLeftMotor.setPower(frontLeftPower);
             backLeftMotor.setPower(backLeftPower);
             frontRightMotor.setPower(frontRightPower);
             backRightMotor.setPower(backRightPower);
+            RotateMotor.setPower(roty);
+
+            String rot = Double.toString(roty);
+            String fL = Double.toString(frontLeftPower);
+            telemetry.addLine("Rotate setPower: "+rot);
+            telemetry.addLine("frontLeft setPower: "+fL);
+            telemetry.update();
         }
     }
 }
