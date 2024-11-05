@@ -55,6 +55,7 @@ public class MacTeleOp extends LinearOpMode {
 
             int position = RotateMotor.getCurrentPosition();
             int positionsl = SlideMotor.getCurrentPosition();
+            boolean ArmTouchPressed = armTouch.isPressed();
 
             double y = -gamepad1.left_stick_y;
             double x = gamepad1.left_stick_x * 0.8;
@@ -102,7 +103,15 @@ public class MacTeleOp extends LinearOpMode {
             //Check if in RUN_TO_POSITION
             if (roty > 0 || roty < 0){
                 RotateMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-                RotateMotor.setPower(roty);
+                
+                // Limit Arm Position
+                if(ArmTouchPressed && roty > 0) {
+                    RotateMotor.setPower(0);
+                }else if (position<-2340 && roty < 0) {
+                    RotateMotor.setPower(0);
+                }else{
+                    RotateMotor.setPower(roty);
+                }
                 isexitarm=true;
             }else if (isexitarm && roty==0){
                 RotateMotor.setTargetPosition(position);
@@ -143,7 +152,7 @@ public class MacTeleOp extends LinearOpMode {
             telemetry.addLine("Slide Encoder Position: "+positionsl);
             telemetry.addLine("-------------Variable-------------");
             telemetry.addLine("IsExitArm: "+isexitarm);
-            //telemetry.addLine("Slide Limit Reached: "+slimit);
+            telemetry.addLine("ArmTouchPressed: "+ArmTouchPressed);
             telemetry.update();
         }
     }
