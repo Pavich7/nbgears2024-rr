@@ -23,7 +23,7 @@ public class MacTeleOp extends LinearOpMode {
         RotateMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         RotateMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         boolean InitArmTouchPressed = armTouch.isPressed();
-        while(InitArmTouchPressed==false){
+        while(!InitArmTouchPressed){
             RotateMotor.setPower(0.2);
             InitArmTouchPressed = armTouch.isPressed();
             telemetry.addLine("Init Arm: Status: "+InitArmTouchPressed);
@@ -41,6 +41,7 @@ public class MacTeleOp extends LinearOpMode {
         telemetry.update();
 
         boolean slimit = false;
+        boolean isexitarm = false;
 
         frontLeftMotor.setDirection(DcMotorSimple.Direction.REVERSE);
         backLeftMotor.setDirection(DcMotorSimple.Direction.REVERSE);
@@ -58,8 +59,8 @@ public class MacTeleOp extends LinearOpMode {
             double y = -gamepad1.left_stick_y;
             double x = gamepad1.left_stick_x * 0.8;
             double rx = gamepad1.right_stick_x * 0.5;
-            //double roty = gamepad2.left_stick_y * 0.5;
-            double ry2= gamepad2.right_stick_y * 0.5;
+            double roty = gamepad2.left_stick_y * 0.5;
+            double ry2= gamepad2.right_stick_y * 0.6;
 
             double denominator = Math.max(Math.abs(y) + Math.abs(x) + Math.abs(rx), 0.8);
             double frontLeftPower = (y + x + rx) / denominator;
@@ -71,22 +72,23 @@ public class MacTeleOp extends LinearOpMode {
             SlideMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
             //Run using Encoder
-            if(gamepad2.y){
+
+            if(gamepad2.y && !isexitarm){
                 RotateMotor.setTargetPosition(-1000);
                 RotateMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                 RotateMotor.setPower(0.6);
             }
-            if(gamepad2.x){
+            if(gamepad2.x && !isexitarm){
                 RotateMotor.setTargetPosition(-100);
                 RotateMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                 RotateMotor.setPower(0.6);
             }
-            if(gamepad2.b){
+            if(gamepad2.b && !isexitarm){
                 RotateMotor.setTargetPosition(-1500);
                 RotateMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                 RotateMotor.setPower(0.6);
             }
-            if(gamepad2.a){
+            if(gamepad2.a && !isexitarm){
                 RotateMotor.setTargetPosition(-2200);
                 RotateMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                 RotateMotor.setPower(0.6);
@@ -96,8 +98,21 @@ public class MacTeleOp extends LinearOpMode {
             backLeftMotor.setPower(backLeftPower);
             frontRightMotor.setPower(frontRightPower);
             backRightMotor.setPower(backRightPower);
-            //RotateMotor.setPower(roty);
+            
+            //Check if in RUN_TO_POSITION
+            if (roty > 0 || roty < 0){
+                RotateMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+                RotateMotor.setPower(roty);
+                isexitarm=true;
+            }else if (isexitarm && roty==0){
+                RotateMotor.setTargetPosition(position);
+                RotateMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                RotateMotor.setPower(0.6);
+                isexitarm=false;
+            }
             SlideMotor.setPower(ry2);
+
+            // Limit Slide by Encoder (Disabled)
 
             /*
             if (positionsl > -2350 || ry2 > 0){
@@ -109,22 +124,25 @@ public class MacTeleOp extends LinearOpMode {
             }
             */
 
-            //String rot = Double.toString(roty);
+            String rot = Double.toString(roty);
             String fL = Double.toString(frontLeftPower);
             String bL = Double.toString(backLeftPower);
             String fR = Double.toString(frontRightPower);
             String bR = Double.toString(backRightPower);
             String sl = Double.toString(ry2);
-            //telemetry.addLine("Rotate setPower: "+rot);
+            telemetry.addLine("-------------Mecanum-------------");
             telemetry.addLine("frontLeft setPower: "+fL);
             telemetry.addLine("backLeftPower setPower: "+bL);
             telemetry.addLine("frontRightPower setPower: "+fR);
             telemetry.addLine("backRightPower setPower: "+bR);
-            telemetry.addLine("--------------------------");
+            telemetry.addLine("-------------ArmDrive-------------");
             telemetry.addLine("SlideMotor setPower: "+sl);
-            telemetry.addLine("--------------------------");
+            telemetry.addLine("RotateMotor setPower: "+rot);
+            telemetry.addLine("-------------Encoder-------------");
             telemetry.addLine("Arm Encoder Position: "+position);
             telemetry.addLine("Slide Encoder Position: "+positionsl);
+            telemetry.addLine("-------------Variable-------------");
+            telemetry.addLine("IsExitArm: "+isexitarm);
             //telemetry.addLine("Slide Limit Reached: "+slimit);
             telemetry.update();
         }
