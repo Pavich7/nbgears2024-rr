@@ -61,7 +61,7 @@ public class MacTeleOp extends LinearOpMode {
             double x = gamepad1.left_stick_x * 0.8;
             double rx = gamepad1.right_stick_x * 0.5;
             double roty = gamepad2.left_stick_y * 0.5;
-            double ry2= gamepad2.right_stick_y * 0.6;
+            double ry2= gamepad2.right_stick_y * 0.8;
 
             double denominator = Math.max(Math.abs(y) + Math.abs(x) + Math.abs(rx), 0.8);
             double frontLeftPower = (y + x + rx) / denominator;
@@ -103,7 +103,7 @@ public class MacTeleOp extends LinearOpMode {
             //Check if in RUN_TO_POSITION
             if (roty > 0 || roty < 0){
                 RotateMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-                
+
                 // Limit Arm Position
                 if(ArmTouchPressed && roty > 0) {
                     RotateMotor.setPower(0);
