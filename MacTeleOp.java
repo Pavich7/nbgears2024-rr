@@ -6,7 +6,7 @@ import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.TouchSensor;
 
-@TeleOp(name = "Full Robot Drive Testing")
+@TeleOp(name = "Full TeleOp Drive (RC)")
 public class MacTeleOp extends LinearOpMode {
 
     @Override
