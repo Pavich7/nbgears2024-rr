@@ -19,9 +19,17 @@ public class MacTeleOp extends LinearOpMode {
         DcMotor RotateMotor = hardwareMap.get(DcMotorEx.class, "RotMot");
         DcMotor SlideMotor = hardwareMap.get(DcMotorEx.class, "SliMot");
         TouchSensor armTouch = hardwareMap.touchSensor.get("armTouch");
+        TouchSensor slideTouch = hardwareMap.touchSensor.get("slideTouch");
         //Reset Encoder
         RotateMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         RotateMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        boolean InitSlideTouchPressed = !slideTouch.isPressed();
+        while(!InitSlideTouchPressed){
+            SlideMotor.setPower(0.3);
+            InitSlideTouchPressed = !slideTouch.isPressed();
+            telemetry.addLine("Init Slide: Status: "+InitSlideTouchPressed);
+            telemetry.update();
+        }
         boolean InitArmTouchPressed = armTouch.isPressed();
         while(!InitArmTouchPressed){
             RotateMotor.setPower(0.2);
@@ -29,6 +37,10 @@ public class MacTeleOp extends LinearOpMode {
             telemetry.addLine("Init Arm: Status: "+InitArmTouchPressed);
             telemetry.update();
         }
+        SlideMotor.setPower(0);
+        SlideMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        SlideMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+
         RotateMotor.setPower(0);
         RotateMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         RotateMotor.setTargetPosition(0);
@@ -56,6 +68,7 @@ public class MacTeleOp extends LinearOpMode {
             int position = RotateMotor.getCurrentPosition();
             int positionsl = SlideMotor.getCurrentPosition();
             boolean ArmTouchPressed = armTouch.isPressed();
+            boolean SlideTouchPressed = !slideTouch.isPressed();
 
             double y = -gamepad1.left_stick_y;
             double x = gamepad1.left_stick_x * 0.8;
@@ -121,17 +134,15 @@ public class MacTeleOp extends LinearOpMode {
             }
             SlideMotor.setPower(ry2);
 
-            // Limit Slide by Encoder (Disabled)
+            // Limit Slide by Encoder
 
-            /*
-            if (positionsl > -2350 || ry2 > 0){
-                SlideMotor.setPower(ry2);
-                slimit = false;
-            }else {
+            if(SlideTouchPressed && ry2 > 0) {
                 SlideMotor.setPower(0);
-                slimit = true;
+            }else if (positionsl<-2300 && ry2 < 0) {
+                SlideMotor.setPower(0);
+            }else{
+                SlideMotor.setPower(ry2);
             }
-            */
 
             String rot = Double.toString(roty);
             String fL = Double.toString(frontLeftPower);
@@ -153,6 +164,7 @@ public class MacTeleOp extends LinearOpMode {
             telemetry.addLine("-------------Variable-------------");
             telemetry.addLine("IsExitArm: "+isexitarm);
             telemetry.addLine("ArmTouchPressed: "+ArmTouchPressed);
+            telemetry.addLine("SlideTouchPressed: "+SlideTouchPressed);
             telemetry.update();
         }
     }
