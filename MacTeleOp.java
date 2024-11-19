@@ -4,11 +4,13 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
+import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.TouchSensor;
 
 @TeleOp(name = "Full TeleOp Drive (RC)")
 public class MacTeleOp extends LinearOpMode {
-
+    public Servo wrist;
+    public Servo intake;
     @Override
     public void runOpMode() throws InterruptedException {
 
@@ -20,6 +22,8 @@ public class MacTeleOp extends LinearOpMode {
         DcMotor SlideMotor = hardwareMap.get(DcMotorEx.class, "SliMot");
         TouchSensor armTouch = hardwareMap.touchSensor.get("armTouch");
         TouchSensor slideTouch = hardwareMap.touchSensor.get("slideTouch");
+        wrist = hardwareMap.get(Servo.class, "wrist");
+        intake = hardwareMap.get(Servo.class, "intake");
         //Reset Encoder
         RotateMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         RotateMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
@@ -37,6 +41,7 @@ public class MacTeleOp extends LinearOpMode {
             telemetry.addLine("Init Arm: Status: "+InitArmTouchPressed);
             telemetry.update();
         }
+        wrist.setPosition(0);
         SlideMotor.setPower(0);
         SlideMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         SlideMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
@@ -74,7 +79,9 @@ public class MacTeleOp extends LinearOpMode {
             double x = gamepad1.left_stick_x * 0.8;
             double rx = gamepad1.right_stick_x * 0.5;
             double roty = gamepad2.left_stick_y * 0.5;
-            double ry2= gamepad2.right_stick_y * 0.8;
+            double ry2 = gamepad2.right_stick_y * 0.8;
+            double lt = gamepad2.left_trigger;
+            double rt = gamepad2.right_trigger;
 
             double denominator = Math.max(Math.abs(y) + Math.abs(x) + Math.abs(rx), 0.8);
             double frontLeftPower = (y + x + rx) / denominator;
@@ -107,12 +114,24 @@ public class MacTeleOp extends LinearOpMode {
                 RotateMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                 RotateMotor.setPower(0.6);
             }
+            if(gamepad2.left_bumper){
+                intake.setPosition(0);
+            }else if(gamepad2.right_bumper){
+                intake.setPosition(1);
+            }else{
+                intake.setPosition(0.5);
+            }
 
             frontLeftMotor.setPower(frontLeftPower);
             backLeftMotor.setPower(backLeftPower);
             frontRightMotor.setPower(frontRightPower);
             backRightMotor.setPower(backRightPower);
-            
+            if(lt>0){
+                wrist.setPosition(wrist.getPosition()-(lt*0.01));
+            } else if (rt>0 && wrist.getPosition()<0.7) {
+                wrist.setPosition(wrist.getPosition()+(rt*0.01));
+            }
+
             //Check if in RUN_TO_POSITION
             if (roty > 0 || roty < 0){
                 RotateMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
@@ -158,6 +177,9 @@ public class MacTeleOp extends LinearOpMode {
             telemetry.addLine("-------------ArmDrive-------------");
             telemetry.addLine("SlideMotor setPower: "+sl);
             telemetry.addLine("RotateMotor setPower: "+rot);
+            telemetry.addLine("-------------Gripper-------------");
+            telemetry.addLine("Wrist setPosition: "+wrist.getPosition());
+            telemetry.addLine("Intake setPosition: "+intake.getPosition());
             telemetry.addLine("-------------Encoder-------------");
             telemetry.addLine("Arm Encoder Position: "+position);
             telemetry.addLine("Slide Encoder Position: "+positionsl);
