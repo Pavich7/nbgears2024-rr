@@ -41,7 +41,7 @@ public class MacTeleOp extends LinearOpMode {
             telemetry.addLine("Init Arm: Status: "+InitArmTouchPressed);
             telemetry.update();
         }
-        wrist.setPosition(0);
+        wrist.setPosition(0.35);
         SlideMotor.setPower(0);
         SlideMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         SlideMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
@@ -79,7 +79,7 @@ public class MacTeleOp extends LinearOpMode {
             double x = gamepad1.left_stick_x * 0.8;
             double rx = gamepad1.right_stick_x * 0.5;
             double roty = gamepad2.left_stick_y * 0.5;
-            double ry2 = gamepad2.right_stick_y * 0.8;
+            double ry2 = gamepad2.right_stick_y * 0.9;
             double lt = gamepad2.left_trigger;
             double rt = gamepad2.right_trigger;
 
@@ -95,12 +95,12 @@ public class MacTeleOp extends LinearOpMode {
             //Run using Encoder
 
             if(gamepad2.y && !isexitarm){
-                RotateMotor.setTargetPosition(-1000);
+                RotateMotor.setTargetPosition(-750);
                 RotateMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                 RotateMotor.setPower(0.6);
             }
             if(gamepad2.x && !isexitarm){
-                RotateMotor.setTargetPosition(-100);
+                RotateMotor.setTargetPosition(0);
                 RotateMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                 RotateMotor.setPower(0.6);
             }
@@ -110,7 +110,7 @@ public class MacTeleOp extends LinearOpMode {
                 RotateMotor.setPower(0.6);
             }
             if(gamepad2.a && !isexitarm){
-                RotateMotor.setTargetPosition(-2200);
+                RotateMotor.setTargetPosition(-1800);
                 RotateMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                 RotateMotor.setPower(0.6);
             }
@@ -127,9 +127,9 @@ public class MacTeleOp extends LinearOpMode {
             frontRightMotor.setPower(frontRightPower);
             backRightMotor.setPower(backRightPower);
             if(lt>0){
-                wrist.setPosition(wrist.getPosition()-(lt*0.01));
+                wrist.setPosition(wrist.getPosition()-(lt*0.02));
             } else if (rt>0 && wrist.getPosition()<0.7) {
-                wrist.setPosition(wrist.getPosition()+(rt*0.01));
+                wrist.setPosition(wrist.getPosition()+(rt*0.02));
             }
 
             //Check if in RUN_TO_POSITION
@@ -139,7 +139,7 @@ public class MacTeleOp extends LinearOpMode {
                 // Limit Arm Position
                 if(ArmTouchPressed && roty > 0) {
                     RotateMotor.setPower(0);
-                }else if (position<-2340 && roty < 0) {
+                }else if (position<-1800 && roty < 0) {
                     RotateMotor.setPower(0);
                 }else{
                     RotateMotor.setPower(roty);
