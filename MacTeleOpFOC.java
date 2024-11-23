@@ -91,6 +91,13 @@ public class MacTeleOpFOC extends LinearOpMode {
             double lt = gamepad2.left_trigger;
             double rt = gamepad2.right_trigger;
 
+            //Operator Rotate
+            if (gamepad2.dpad_left) {
+                rx=-0.25;
+            } else if (gamepad2.dpad_right) {
+                rx=0.25;
+            }
+
             double botHeading = imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS);
             double rotX = x * Math.cos(-botHeading) - y * Math.sin(-botHeading);
             double rotY = x * Math.sin(-botHeading) + y * Math.cos(-botHeading);
