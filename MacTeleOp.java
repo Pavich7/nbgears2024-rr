@@ -83,6 +83,13 @@ public class MacTeleOp extends LinearOpMode {
             double lt = gamepad2.left_trigger;
             double rt = gamepad2.right_trigger;
 
+            //Operator Rotate
+            if (gamepad2.dpad_left) {
+                rx=-0.25;
+            } else if (gamepad2.dpad_right) {
+                rx=0.25;
+            }
+
             double denominator = Math.max(Math.abs(y) + Math.abs(x) + Math.abs(rx), 0.8);
             double frontLeftPower = (y + x + rx) / denominator;
             double backLeftPower = (y - x + rx) / denominator;
