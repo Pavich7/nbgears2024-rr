@@ -35,6 +35,8 @@ public class MacTeleOpFOC extends LinearOpMode {
         //Reset Encoder
         RotateMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         RotateMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        SlideMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        SlideMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         boolean InitSlideTouchPressed = !slideTouch.isPressed();
         while(!InitSlideTouchPressed){
             SlideMotor.setPower(0.3);
@@ -50,8 +52,11 @@ public class MacTeleOpFOC extends LinearOpMode {
             telemetry.update();
         }
         wrist.setPosition(0.35);
+
         SlideMotor.setPower(0);
         SlideMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        SlideMotor.setTargetPosition(0);
+        SlideMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         SlideMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
         RotateMotor.setPower(0);
@@ -59,14 +64,14 @@ public class MacTeleOpFOC extends LinearOpMode {
         RotateMotor.setTargetPosition(0);
         RotateMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         RotateMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        SlideMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        SlideMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         //End reset Encoder
+        imu.resetYaw();
         telemetry.addLine("Robot Ready.");
         telemetry.update();
 
         boolean slimit = false;
         boolean isexitarm = false;
+        boolean isexitsl = false;
 
         frontLeftMotor.setDirection(DcMotorSimple.Direction.REVERSE);
         backLeftMotor.setDirection(DcMotorSimple.Direction.REVERSE);
@@ -87,7 +92,7 @@ public class MacTeleOpFOC extends LinearOpMode {
             double x = gamepad1.left_stick_x * 0.8;
             double rx = gamepad1.right_stick_x * 0.5;
             double roty = gamepad2.left_stick_y * 0.5;
-            double ry2 = gamepad2.right_stick_y * 0.9;
+            double ry2 = gamepad2.right_stick_y * 0.8;
             double lt = gamepad2.left_trigger;
             double rt = gamepad2.right_trigger;
 
@@ -119,21 +124,33 @@ public class MacTeleOpFOC extends LinearOpMode {
                 RotateMotor.setTargetPosition(-750);
                 RotateMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                 RotateMotor.setPower(0.6);
+                SlideMotor.setTargetPosition(-2000);
+                SlideMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                SlideMotor.setPower(0.6);
             }
             if(gamepad2.x && !isexitarm){
                 RotateMotor.setTargetPosition(0);
                 RotateMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                 RotateMotor.setPower(0.6);
+                SlideMotor.setTargetPosition(0);
+                SlideMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                SlideMotor.setPower(0.6);
             }
             if(gamepad2.b && !isexitarm){
                 RotateMotor.setTargetPosition(-1500);
                 RotateMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                 RotateMotor.setPower(0.6);
+                SlideMotor.setTargetPosition(-2300);
+                SlideMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                SlideMotor.setPower(0.6);
             }
             if(gamepad2.a && !isexitarm){
                 RotateMotor.setTargetPosition(-1800);
                 RotateMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                 RotateMotor.setPower(0.6);
+                SlideMotor.setTargetPosition(-2000);
+                SlideMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                SlideMotor.setPower(0.6);
             }
             if(gamepad2.left_bumper){
                 intake.setPosition(0);
@@ -175,16 +192,24 @@ public class MacTeleOpFOC extends LinearOpMode {
                 RotateMotor.setPower(0.6);
                 isexitarm=false;
             }
-            SlideMotor.setPower(ry2);
 
-            // Limit Slide by Encoder
+            if (ry2 > 0 || ry2 < 0){
+                SlideMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
-            if(SlideTouchPressed && ry2 > 0) {
-                SlideMotor.setPower(0);
-            }else if (positionsl<-2300 && ry2 < 0) {
-                SlideMotor.setPower(0);
-            }else{
-                SlideMotor.setPower(ry2);
+                // Limit Slide Position
+                if(SlideTouchPressed && ry2 > 0) {
+                    SlideMotor.setPower(0);
+                }else if (positionsl<-2300 && ry2 < 0) {
+                    SlideMotor.setPower(0);
+                }else{
+                    SlideMotor.setPower(ry2);
+                }
+                isexitsl=true;
+            }else if (isexitsl && ry2==0){
+                SlideMotor.setTargetPosition(positionsl);
+                SlideMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                SlideMotor.setPower(0.6);
+                isexitsl=false;
             }
 
             String rot = Double.toString(roty);
@@ -193,12 +218,12 @@ public class MacTeleOpFOC extends LinearOpMode {
             String fR = Double.toString(frontRightPower);
             String bR = Double.toString(backRightPower);
             String sl = Double.toString(ry2);
+            String bh = Double.toString(botHeading);
             telemetry.addLine("-------------Mecanum-------------");
             telemetry.addLine("frontLeft setPower: "+fL);
             telemetry.addLine("backLeftPower setPower: "+bL);
             telemetry.addLine("frontRightPower setPower: "+fR);
             telemetry.addLine("backRightPower setPower: "+bR);
-            String bh = Double.toString(botHeading);
             telemetry.addLine("IMU BotHeading:"+bh);
             telemetry.addLine("-------------ArmDrive-------------");
             telemetry.addLine("SlideMotor setPower: "+sl);
@@ -211,6 +236,7 @@ public class MacTeleOpFOC extends LinearOpMode {
             telemetry.addLine("Slide Encoder Position: "+positionsl);
             telemetry.addLine("-------------Variable-------------");
             telemetry.addLine("IsExitArm: "+isexitarm);
+            telemetry.addLine("IsExitSlide: "+isexitsl);
             telemetry.addLine("ArmTouchPressed: "+ArmTouchPressed);
             telemetry.addLine("SlideTouchPressed: "+SlideTouchPressed);
             telemetry.update();
