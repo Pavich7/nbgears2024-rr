@@ -120,7 +120,7 @@ public class MacTeleOpFOC extends LinearOpMode {
 
             //Run using Encoder
 
-            if(gamepad2.y && !isexitarm){
+            if(gamepad2.y && !isexitarm && !isexitsl){
                 RotateMotor.setTargetPosition(-750);
                 RotateMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                 RotateMotor.setPower(0.6);
@@ -128,7 +128,7 @@ public class MacTeleOpFOC extends LinearOpMode {
                 SlideMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                 SlideMotor.setPower(0.6);
             }
-            if(gamepad2.x && !isexitarm){
+            if(gamepad2.x && !isexitarm && !isexitsl){
                 RotateMotor.setTargetPosition(0);
                 RotateMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                 RotateMotor.setPower(0.6);
@@ -136,7 +136,7 @@ public class MacTeleOpFOC extends LinearOpMode {
                 SlideMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                 SlideMotor.setPower(0.6);
             }
-            if(gamepad2.b && !isexitarm){
+            if(gamepad2.b && !isexitarm && !isexitsl){
                 RotateMotor.setTargetPosition(-1500);
                 RotateMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                 RotateMotor.setPower(0.6);
@@ -144,13 +144,15 @@ public class MacTeleOpFOC extends LinearOpMode {
                 SlideMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                 SlideMotor.setPower(0.6);
             }
-            if(gamepad2.a && !isexitarm){
+            if(gamepad2.a && !isexitarm && !isexitsl){
+                /*
                 RotateMotor.setTargetPosition(-1800);
                 RotateMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                 RotateMotor.setPower(0.6);
                 SlideMotor.setTargetPosition(-2000);
                 SlideMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                 SlideMotor.setPower(0.6);
+                 */
             }
             if(gamepad2.left_bumper){
                 intake.setPosition(0);
