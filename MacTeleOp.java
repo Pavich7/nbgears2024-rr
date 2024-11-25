@@ -7,7 +7,7 @@ import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.TouchSensor;
 
-@TeleOp(name = "Full TeleOp Drive (RC)")
+@TeleOp(name = "ZDepre! Full TeleOp Drive (RC)")
 public class MacTeleOp extends LinearOpMode {
     public Servo wrist;
     public Servo intake;
