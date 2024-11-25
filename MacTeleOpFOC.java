@@ -72,6 +72,7 @@ public class MacTeleOpFOC extends LinearOpMode {
         boolean slimit = false;
         boolean isexitarm = false;
         boolean isexitsl = false;
+        boolean outtaked = false;
 
         frontLeftMotor.setDirection(DcMotorSimple.Direction.REVERSE);
         backLeftMotor.setDirection(DcMotorSimple.Direction.REVERSE);
@@ -156,10 +157,14 @@ public class MacTeleOpFOC extends LinearOpMode {
             }
             if(gamepad2.left_bumper){
                 intake.setPosition(0);
+                outtaked=true;
             }else if(gamepad2.right_bumper){
                 intake.setPosition(1);
+                outtaked=false;
             }else{
-                intake.setPosition(0.5);
+                if (outtaked){
+                    intake.setPosition(0.5);
+                }
             }
             if (gamepad1.a) {
                 imu.resetYaw();
