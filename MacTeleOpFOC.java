@@ -11,7 +11,7 @@ import com.qualcomm.robotcore.hardware.TouchSensor;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 
-@TeleOp(name = "Full TeleOp Drive (FC)")
+@TeleOp(name = "Full TeleOp Drive")
 public class MacTeleOpFOC extends LinearOpMode {
     public Servo wrist;
     public Servo intake;
@@ -219,19 +219,17 @@ public class MacTeleOpFOC extends LinearOpMode {
                 isexitsl=false;
             }
 
-            String rot = Double.toString(roty);
-            String fL = Double.toString(frontLeftPower);
-            String bL = Double.toString(backLeftPower);
-            String fR = Double.toString(frontRightPower);
-            String bR = Double.toString(backRightPower);
-            String sl = Double.toString(ry2);
-            String bh = Double.toString(botHeading);
-            telemetry.addLine("-------------Mecanum-------------");
-            telemetry.addLine("frontLeft setPower: "+fL);
-            telemetry.addLine("backLeftPower setPower: "+bL);
-            telemetry.addLine("frontRightPower setPower: "+fR);
-            telemetry.addLine("backRightPower setPower: "+bR);
-            telemetry.addLine("IMU BotHeading:"+bh);
+            String rot = String.format("%.7f",rotY);
+            String fL = String.format("%.4f",frontLeftPower);
+            String bL = String.format("%.4f",backLeftPower);
+            String fR = String.format("%.4f",frontRightPower);
+            String bR = String.format("%.4f",backRightPower);
+            String sl = String.format("%.7f",ry2);
+            String bh = String.format("%.7f",botHeading);
+            telemetry.addLine("-------------Driving-------------");
+            telemetry.addLine("frontLeft: "+fL+" frontRight: "+fR);
+            telemetry.addLine("backLeft: "+bL+" backRight: "+bR);
+            telemetry.addLine("Heading:"+bh);
             telemetry.addLine("-------------ArmDrive-------------");
             telemetry.addLine("SlideMotor setPower: "+sl);
             telemetry.addLine("RotateMotor setPower: "+rot);
