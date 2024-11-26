@@ -1,90 +1,196 @@
 package org.firstinspires.ftc.teamcode;
 
 import androidx.annotation.NonNull;
-
 import com.acmerobotics.dashboard.config.Config;
-import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import com.acmerobotics.roadrunner.Action;
-import com.acmerobotics.roadrunner.ParallelAction;
 import com.acmerobotics.roadrunner.Pose2d;
 import com.acmerobotics.roadrunner.SequentialAction;
+import com.acmerobotics.roadrunner.TrajectoryActionBuilder;
 import com.acmerobotics.roadrunner.Vector2d;
 import com.acmerobotics.roadrunner.ftc.Actions;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
-
-//import org.firstinspires.ftc.teamcode.RobotCore;
-import org.firstinspires.ftc.teamcode.MecanumDrive.FollowTrajectoryAction;
+import com.qualcomm.robotcore.hardware.DcMotorEx;
 import org.firstinspires.ftc.teamcode.MecanumDrive;
 
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
+import com.qualcomm.robotcore.hardware.HardwareMap;
+import com.qualcomm.robotcore.hardware.Servo;
+
 @Config
-@Autonomous(name = "AutoDriveTest", group = "0000-Example")
+@Autonomous(name = "Auto Drive Test (Blue)", group = "Autonomous")
 public class AutoDriveTest extends LinearOpMode {
+    /*
+    public class Lift {
+        private DcMotorEx lift;
 
-    @Override
-    public void runOpMode() {
-
-        MecanumDrive drive = new MecanumDrive(hardwareMap, new Pose2d(0,0,0));
-
-        //DcMotor motor1 = hardwareMap.get(DcMotor.class,  "motor");
-
-        // Delcare Trajectory as such
-        Action trajectory0 = drive.actionBuilder(new Pose2d(-6.67, -64.88, Math.toRadians(90.00)))
-                .splineTo(new Vector2d(-5.61, -43.16), Math.toRadians(87.18))
-                .splineTo(new Vector2d(15.75, -45.48), Math.toRadians(-6.18))
-                .splineTo(new Vector2d(16.82, -60.96), Math.toRadians(-86.05))
-                .splineTo(new Vector2d(32.48, -62.57), Math.toRadians(-5.84))
-                .splineTo(new Vector2d(33.55, -44.94), Math.toRadians(86.53))
-                .splineTo(new Vector2d(52.60, -40.32), Math.toRadians(13.66))
-                .splineTo(new Vector2d(56.16, -59.54), Math.toRadians(-79.51))
-                .build();
-
-
-
-        while(!isStopRequested() && !opModeIsActive()) {
-
+        public Lift(HardwareMap hardwareMap) {
+            lift = hardwareMap.get(DcMotorEx.class, "liftMotor");
+            lift.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+            lift.setDirection(DcMotorSimple.Direction.FORWARD);
         }
 
+        public class LiftUp implements Action {
+            private boolean initialized = false;
+
+            @Override
+            public boolean run(@NonNull TelemetryPacket packet) {
+                if (!initialized) {
+                    lift.setPower(0.8);
+                    initialized = true;
+                }
+
+                double pos = lift.getCurrentPosition();
+                packet.put("liftPos", pos);
+                if (pos < 3000.0) {
+                    return true;
+                } else {
+                    lift.setPower(0);
+                    return false;
+                }
+            }
+        }
+        public Action liftUp() {
+            return new LiftUp();
+        }
+
+        public class LiftDown implements Action {
+            private boolean initialized = false;
+
+            @Override
+            public boolean run(@NonNull TelemetryPacket packet) {
+                if (!initialized) {
+                    lift.setPower(-0.8);
+                    initialized = true;
+                }
+
+                double pos = lift.getCurrentPosition();
+                packet.put("liftPos", pos);
+                if (pos > 100.0) {
+                    return true;
+                } else {
+                    lift.setPower(0);
+                    return false;
+                }
+            }
+        }
+        public Action liftDown(){
+            return new LiftDown();
+        }
+    }
+
+    public class Claw {
+        private Servo claw;
+
+        public Claw(HardwareMap hardwareMap) {
+            claw = hardwareMap.get(Servo.class, "claw");
+        }
+
+        public class CloseClaw implements Action {
+            @Override
+            public boolean run(@NonNull TelemetryPacket packet) {
+                claw.setPosition(0.55);
+                return false;
+            }
+        }
+        public Action closeClaw() {
+            return new CloseClaw();
+        }
+
+        public class OpenClaw implements Action {
+            @Override
+            public boolean run(@NonNull TelemetryPacket packet) {
+                claw.setPosition(1.0);
+                return false;
+            }
+        }
+        public Action openClaw() {
+            return new OpenClaw();
+        }
+    }
+    */
+    @Override
+    public void runOpMode() {
+        Pose2d initialPose = new Pose2d(0, 70, Math.toRadians(-90));
+        MecanumDrive drive = new MecanumDrive(hardwareMap, initialPose);
+        //Claw claw = new Claw(hardwareMap);
+        //Lift lift = new Lift(hardwareMap);
+
+        // vision here that outputs position
+        int visionOutputPosition = 1;
+
+        TrajectoryActionBuilder tab1 = drive.actionBuilder(initialPose)
+                .lineToY(50)
+                .strafeTo(new Vector2d(-50, 50))
+                .strafeTo(new Vector2d(-50, 5))
+                .turn(Math.toRadians(-120))
+                .strafeTo(new Vector2d(-50, 60))
+                .strafeTo(new Vector2d(-50, 5))
+                .strafeTo(new Vector2d(-60, 5));
+                /*
+                .waitSeconds(2)
+                .setTangent(Math.toRadians(90))
+                .lineToY(48)
+                .setTangent(Math.toRadians(0))
+                .lineToX(32)
+                .strafeTo(new Vector2d(44.5, 30))
+                .turn(Math.toRadians(180))
+                .lineToX(47.5)
+                .waitSeconds(3);
+                 */
+        TrajectoryActionBuilder tab2 = drive.actionBuilder(initialPose)
+                .lineToY(37)
+                .setTangent(Math.toRadians(0))
+                .lineToX(18)
+                .waitSeconds(3)
+                .setTangent(Math.toRadians(0))
+                .lineToXSplineHeading(46, Math.toRadians(180))
+                .waitSeconds(3);
+        TrajectoryActionBuilder tab3 = drive.actionBuilder(initialPose)
+                .lineToYSplineHeading(33, Math.toRadians(180))
+                .waitSeconds(2)
+                .strafeTo(new Vector2d(46, 30))
+                .waitSeconds(3);
+        Action trajectoryActionCloseOut = tab1.endTrajectory().fresh()
+                .strafeTo(new Vector2d(-60, 60))
+                .build();
+
+        // actions that need to happen on init; for instance, a claw tightening.
+        //Actions.runBlocking(claw.closeClaw());
+
+
+        while (!isStopRequested() && !opModeIsActive()) {
+            int position = visionOutputPosition;
+            telemetry.addData("Position during Init", position);
+            telemetry.update();
+        }
+
+        int startPosition = visionOutputPosition;
+        telemetry.addData("Starting Position", startPosition);
+        telemetry.update();
         waitForStart();
 
         if (isStopRequested()) return;
 
+        Action trajectoryActionChosen;
+        if (startPosition == 1) {
+            trajectoryActionChosen = tab1.build();
+        } else if (startPosition == 2) {
+            trajectoryActionChosen = tab2.build();
+        } else {
+            trajectoryActionChosen = tab3.build();
+        }
+
         Actions.runBlocking(
                 new SequentialAction(
-                        trajectory0, // Example of a drive action
-
-                        // This action and the following action do the same thing
-                        new Action() {
-                            @Override
-                            public boolean run(@NonNull TelemetryPacket telemetryPacket) {
-                                telemetry.addLine("Action!");
-                                telemetry.update();
-                                return false;
-                            }
-                        },
-                        // Only that this action uses a Lambda expression to reduce complexity
-                        (telemetryPacket) -> {
-                            telemetry.addLine("Action!");
-                            telemetry.update();
-                            return false; // Returning true causes the action to run again, returning false causes it to cease
-                        },
-                        new ParallelAction( // several actions being run in parallel
-                                //TrajectoryAction2, // Run second trajectory
-                                (telemetryPacket) -> { // Run some action
-                                    //motor1.setPower(1);
-                                    return false;
-                                }
-                        ) /*,
-                        drive.actionBuilder(new Pose2d(15,10,Math.toRadians(125))) // Another way of running a trajectory (not recommended because trajectories take time to build and will slow down your code, always try to build them beforehand)
-                                .splineTo(new Vector2d(25, 15), 0)
-                                .build()
-                        */
+                        trajectoryActionChosen,
+                        //lift.liftUp(),
+                        //claw.openClaw(),
+                        //lift.liftDown(),
+                        trajectoryActionCloseOut
                 )
         );
-
-
     }
-
 }
