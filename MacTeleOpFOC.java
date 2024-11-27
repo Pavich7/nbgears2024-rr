@@ -155,10 +155,10 @@ public class MacTeleOpFOC extends LinearOpMode {
                 SlideMotor.setPower(0.6);
                  */
             }
-            if(lt>0){
+            if(gamepad2.left_bumper){
                 intake.setPosition(0);
                 outtaked=true;
-            }else if(gamepad2.left_bumper){
+            }else if(lt>0){
                 intake.setPosition(1);
                 outtaked=false;
             }else{
@@ -174,9 +174,9 @@ public class MacTeleOpFOC extends LinearOpMode {
             backLeftMotor.setPower(backLeftPower);
             frontRightMotor.setPower(frontRightPower);
             backRightMotor.setPower(backRightPower);
-            if(gamepad2.right_bumper && wrist.getPosition()<0.65){
+            if(rt>0 && wrist.getPosition()<0.65){
                 wrist.setPosition(wrist.getPosition()+0.015);
-            } else if (rt>0 && wrist.getPosition()<0.7) {
+            } else if (gamepad2.right_bumper && wrist.getPosition()<0.7) {
                 wrist.setPosition(wrist.getPosition()-0.02);
             }
 
