@@ -1,0 +1,32 @@
+package org.firstinspires.ftc.teamcode;
+
+import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.hardware.DcMotor;
+
+@Autonomous(name = "armauto")
+public  class armauto extends LinearOpMode {
+    private DcMotor arm;
+    private int armPos;
+    @Override
+    public void runOpMode() {
+        arm = hardwareMap.get(DcMotor.class, "RotMot");
+        arm.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        armPos = 0;
+        telemetry.addData("Status : ", "Install");
+        telemetry.update();
+
+        waitForStart();
+        arm.setTargetPosition(1000);
+        arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        arm.setPower(0.3);
+
+        while (opModeIsActive()) {
+            telemetry.addData("Arm Position", arm.getCurrentPosition());
+            telemetry.addData("Status", "Running");
+            telemetry.update();
+        }
+    }
+
+
+}
