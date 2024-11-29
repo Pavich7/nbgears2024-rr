@@ -42,12 +42,14 @@ public class MacTeleOpFOC extends LinearOpMode {
             SlideMotor.setPower(0.3);
             InitSlideTouchPressed = !slideTouch.isPressed();
             telemetry.addLine("Init Slide: Status: "+InitSlideTouchPressed);
+            telemetry.addLine("Init Arm: Status: Pending...");
             telemetry.update();
         }
         boolean InitArmTouchPressed = armTouch.isPressed();
         while(!InitArmTouchPressed){
             RotateMotor.setPower(0.2);
             InitArmTouchPressed = armTouch.isPressed();
+            telemetry.addLine("Init Slide: Status: OK");
             telemetry.addLine("Init Arm: Status: "+InitArmTouchPressed);
             telemetry.update();
         }
@@ -66,6 +68,8 @@ public class MacTeleOpFOC extends LinearOpMode {
         RotateMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         //End reset Encoder
         imu.resetYaw();
+        telemetry.addLine("Init Slide: Status: OK");
+        telemetry.addLine("Init Arm: Status: OK");
         telemetry.addLine("Robot Ready.");
         telemetry.update();
 
@@ -187,6 +191,8 @@ public class MacTeleOpFOC extends LinearOpMode {
                 // Limit Arm Position
                 if(ArmTouchPressed && roty > 0) {
                     RotateMotor.setPower(0);
+                    RotateMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+                    RotateMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
                 }else if (position<-1800 && roty < 0) {
                     RotateMotor.setPower(0);
                 }else{
@@ -206,7 +212,9 @@ public class MacTeleOpFOC extends LinearOpMode {
                 // Limit Slide Position
                 if(SlideTouchPressed && ry2 > 0) {
                     SlideMotor.setPower(0);
-                }else if (positionsl<-2300 && ry2 < 0) {
+                    SlideMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+                    SlideMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+                }else if (positionsl<-2700 && ry2 < 0) {
                     SlideMotor.setPower(0);
                 }else{
                     SlideMotor.setPower(ry2);
@@ -240,8 +248,8 @@ public class MacTeleOpFOC extends LinearOpMode {
             telemetry.addLine("Arm Encoder Position: "+position);
             telemetry.addLine("Slide Encoder Position: "+positionsl);
             telemetry.addLine("-------------Variable-------------");
-            telemetry.addLine("IsExitArm: "+isexitarm);
-            telemetry.addLine("IsExitSlide: "+isexitsl);
+            //telemetry.addLine("IsExitArm: "+isexitarm);
+            //telemetry.addLine("IsExitSlide: "+isexitsl);
             telemetry.addLine("ArmTouchPressed: "+ArmTouchPressed);
             telemetry.addLine("SlideTouchPressed: "+SlideTouchPressed);
             telemetry.update();
