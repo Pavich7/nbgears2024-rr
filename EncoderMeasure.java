@@ -71,7 +71,7 @@ public class EncoderMeasure extends LinearOpMode {
             boolean ArmTouchPressed = armTouch.isPressed();
             boolean SlideTouchPressed = !slideTouch.isPressed();
 
-            if(gamepad2.a){
+            if(gamepad1.a){
                 RotateMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
                 RotateMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
                 SlideMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -80,7 +80,7 @@ public class EncoderMeasure extends LinearOpMode {
 
             telemetry.addLine("====== Encoder Measurement ======");
             telemetry.addLine("Welcome! Use with caution!");
-            telemetry.addLine("Press A to reset Encoder");
+            telemetry.addLine("Press A on Gamepad 1 to reset Encoder");
             telemetry.addLine("-------------Encoder-------------");
             telemetry.addLine("Arm Encoder Position: "+position);
             telemetry.addLine("Slide Encoder Position: "+positionsl);
