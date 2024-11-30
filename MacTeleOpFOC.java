@@ -37,6 +37,7 @@ public class MacTeleOpFOC extends LinearOpMode {
         RotateMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         SlideMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         SlideMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        wrist.setPosition(0.35);
         boolean InitSlideTouchPressed = !slideTouch.isPressed();
         while(!InitSlideTouchPressed){
             SlideMotor.setPower(0.3);
@@ -53,7 +54,6 @@ public class MacTeleOpFOC extends LinearOpMode {
             telemetry.addLine("Init Arm: Status: "+InitArmTouchPressed);
             telemetry.update();
         }
-        wrist.setPosition(0.35);
 
         SlideMotor.setPower(0);
         SlideMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -93,11 +93,11 @@ public class MacTeleOpFOC extends LinearOpMode {
             boolean ArmTouchPressed = armTouch.isPressed();
             boolean SlideTouchPressed = !slideTouch.isPressed();
 
-            double y = -gamepad1.left_stick_y;
-            double x = gamepad1.left_stick_x * 0.8;
+            double y = -gamepad1.left_stick_y * 0.9;
+            double x = gamepad1.left_stick_x * 0.9;
             double rx = gamepad1.right_stick_x * 0.5;
             double roty = gamepad2.left_stick_y * 0.5;
-            double ry2 = gamepad2.right_stick_y * 0.8;
+            double ry2 = gamepad2.right_stick_y * 0.85;
             double lt = gamepad2.left_trigger;
             double rt = gamepad2.right_trigger;
 
@@ -124,23 +124,31 @@ public class MacTeleOpFOC extends LinearOpMode {
             SlideMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
             //Run using Encoder
-
             if(gamepad2.y && !isexitarm && !isexitsl){
-                RotateMotor.setTargetPosition(-750);
-                RotateMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                RotateMotor.setPower(0.6);
-                SlideMotor.setTargetPosition(-2000);
-                SlideMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                SlideMotor.setPower(0.6);
+                if(RotateMotor.getCurrentPosition()<-1200 && RotateMotor.getCurrentPosition()>-1400){
+                    SlideMotor.setTargetPosition(-3150);
+                    SlideMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                    SlideMotor.setPower(0.85);
+                    wrist.setPosition(0.41);
+                } else {
+                    RotateMotor.setTargetPosition(-1300);
+                    RotateMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                    RotateMotor.setPower(0.6);
+                }
             }
             if(gamepad2.x && !isexitarm && !isexitsl){
-                RotateMotor.setTargetPosition(0);
-                RotateMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                RotateMotor.setPower(0.6);
-                SlideMotor.setTargetPosition(0);
-                SlideMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                SlideMotor.setPower(0.6);
+                if(SlideMotor.getCurrentPosition()>-100){
+                    RotateMotor.setTargetPosition(0);
+                    RotateMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                    RotateMotor.setPower(0.6);
+                    wrist.setPosition(0.1);
+                } else {
+                    SlideMotor.setTargetPosition(0);
+                    SlideMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                    SlideMotor.setPower(0.85);
+                }
             }
+            /*
             if(gamepad2.b && !isexitarm && !isexitsl){
                 RotateMotor.setTargetPosition(-1500);
                 RotateMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
@@ -150,15 +158,14 @@ public class MacTeleOpFOC extends LinearOpMode {
                 SlideMotor.setPower(0.6);
             }
             if(gamepad2.a && !isexitarm && !isexitsl){
-                /*
                 RotateMotor.setTargetPosition(-1800);
                 RotateMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                 RotateMotor.setPower(0.6);
                 SlideMotor.setTargetPosition(-2000);
                 SlideMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                 SlideMotor.setPower(0.6);
-                 */
             }
+            */
             if(gamepad2.left_bumper){
                 intake.setPosition(0);
                 outtaked=true;
@@ -214,7 +221,7 @@ public class MacTeleOpFOC extends LinearOpMode {
                     SlideMotor.setPower(0);
                     SlideMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
                     SlideMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-                }else if (positionsl<-2700 && ry2 < 0) {
+                }else if (positionsl<-3150 && ry2 < 0) {
                     SlideMotor.setPower(0);
                 }else{
                     SlideMotor.setPower(ry2);
@@ -234,6 +241,7 @@ public class MacTeleOpFOC extends LinearOpMode {
             String bR = String.format("%.4f",backRightPower);
             String sl = String.format("%.7f",ry2);
             String bh = String.format("%.7f",botHeading);
+            telemetry.addLine("======== TeleOp Telemetry ========");
             telemetry.addLine("-------------Driving-------------");
             telemetry.addLine("frontLeft: "+fL+" frontRight: "+fR);
             telemetry.addLine("backLeft: "+bL+" backRight: "+bR);
