@@ -42,6 +42,10 @@ public class MacTeleOpFOC extends LinearOpMode {
         while(!InitSlideTouchPressed){
             SlideMotor.setPower(0.3);
             InitSlideTouchPressed = !slideTouch.isPressed();
+            if (gamepad1.x){
+                break;
+            }
+            telemetry.addLine("Press X on Driver to EMERGENCY BYPASS homing.");
             telemetry.addLine("Init Slide: Status: "+InitSlideTouchPressed);
             telemetry.addLine("Init Arm: Status: Pending...");
             telemetry.update();
@@ -50,6 +54,10 @@ public class MacTeleOpFOC extends LinearOpMode {
         while(!InitArmTouchPressed){
             RotateMotor.setPower(0.2);
             InitArmTouchPressed = armTouch.isPressed();
+            if (gamepad1.x){
+                break;
+            }
+            telemetry.addLine("Press X on Driver to EMERGENCY BYPASS homing.");
             telemetry.addLine("Init Slide: Status: OK");
             telemetry.addLine("Init Arm: Status: "+InitArmTouchPressed);
             telemetry.update();
@@ -68,9 +76,10 @@ public class MacTeleOpFOC extends LinearOpMode {
         RotateMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         //End reset Encoder
         imu.resetYaw();
+        telemetry.addLine("Initial homing processes completed!");
         telemetry.addLine("Init Slide: Status: OK");
         telemetry.addLine("Init Arm: Status: OK");
-        telemetry.addLine("Robot Ready.");
+        telemetry.addLine("Robot is now ready.");
         telemetry.update();
 
         boolean slimit = false;
@@ -133,14 +142,14 @@ public class MacTeleOpFOC extends LinearOpMode {
                 } else {
                     RotateMotor.setTargetPosition(-1300);
                     RotateMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                    RotateMotor.setPower(0.6);
+                    RotateMotor.setPower(0.7);
                 }
             }
             if(gamepad2.x && !isexitarm && !isexitsl){
                 if(SlideMotor.getCurrentPosition()>-100){
                     RotateMotor.setTargetPosition(0);
                     RotateMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                    RotateMotor.setPower(0.6);
+                    RotateMotor.setPower(0.7);
                     wrist.setPosition(0.1);
                 } else {
                     SlideMotor.setTargetPosition(0);
