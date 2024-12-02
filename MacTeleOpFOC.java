@@ -38,6 +38,7 @@ public class MacTeleOpFOC extends LinearOpMode {
         SlideMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         SlideMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         wrist.setPosition(0.35);
+        //Slide Homing
         boolean InitSlideTouchPressed = !slideTouch.isPressed();
         while(!InitSlideTouchPressed){
             SlideMotor.setPower(0.3);
@@ -50,6 +51,7 @@ public class MacTeleOpFOC extends LinearOpMode {
             telemetry.addLine("Init Arm: Status: Pending...");
             telemetry.update();
         }
+        //Arm Homing
         boolean InitArmTouchPressed = armTouch.isPressed();
         while(!InitArmTouchPressed){
             RotateMotor.setPower(0.2);
@@ -62,27 +64,30 @@ public class MacTeleOpFOC extends LinearOpMode {
             telemetry.addLine("Init Arm: Status: "+InitArmTouchPressed);
             telemetry.update();
         }
-
+        
+        //Reset Slide Encoder
         SlideMotor.setPower(0);
         SlideMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         SlideMotor.setTargetPosition(0);
         SlideMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         SlideMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-
+        
+        //Reset Arm Encoder
         RotateMotor.setPower(0);
         RotateMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         RotateMotor.setTargetPosition(0);
         RotateMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         RotateMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        
         //End reset Encoder
+        
         imu.resetYaw();
         telemetry.addLine("Initial homing processes completed!");
         telemetry.addLine("Init Slide: Status: OK");
         telemetry.addLine("Init Arm: Status: OK");
         telemetry.addLine("Robot is now ready.");
         telemetry.update();
-
-        boolean slimit = false;
+        
         boolean isexitarm = false;
         boolean isexitsl = false;
         boolean outtaked = false;
@@ -96,17 +101,19 @@ public class MacTeleOpFOC extends LinearOpMode {
         if (isStopRequested()) return;
 
         while (opModeIsActive()) {
-
+            
+            //Realtime Encoder and Limit Switch data
             int position = RotateMotor.getCurrentPosition();
             int positionsl = SlideMotor.getCurrentPosition();
             boolean ArmTouchPressed = armTouch.isPressed();
             boolean SlideTouchPressed = !slideTouch.isPressed();
-
-            double y = -gamepad1.left_stick_y * 0.9;
-            double x = gamepad1.left_stick_x * 0.9;
-            double rx = gamepad1.right_stick_x * 0.5;
-            double roty = gamepad2.left_stick_y * 0.5;
-            double ry2 = gamepad2.right_stick_y * 0.85;
+            
+            //Input value from joystick
+            double y = -gamepad1.left_stick_y * 0.9; //Forward Backward
+            double x = gamepad1.left_stick_x * 0.9; //Left Right
+            double rx = gamepad1.right_stick_x * 0.5; //Rotate
+            double roty = gamepad2.left_stick_y * 0.5; //Arm
+            double ry2 = gamepad2.right_stick_y * 0.85; //Slide
             double lt = gamepad2.left_trigger;
             double rt = gamepad2.right_trigger;
 
@@ -117,10 +124,12 @@ public class MacTeleOpFOC extends LinearOpMode {
                 rx=0.25;
             }
 
+            //FOC Driving
             double botHeading = imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS);
             double rotX = x * Math.cos(-botHeading) - y * Math.sin(-botHeading);
             double rotY = x * Math.sin(-botHeading) + y * Math.cos(-botHeading);
-
+            
+            //Some Tuning?
             rotX = rotX * 1.1;
 
             double denominator = Math.max(Math.abs(rotY) + Math.abs(rotX) + Math.abs(rx), 1);
@@ -129,10 +138,13 @@ public class MacTeleOpFOC extends LinearOpMode {
             double frontRightPower = (rotY - rotX - rx) / denominator;
             double backRightPower = (rotY + rotX - rx) / denominator;
 
+            //Traditional Motor Break
             RotateMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
             SlideMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
-            //Run using Encoder
+            //Macros
+
+            //Y High Basket
             if(gamepad2.y && !isexitarm && !isexitsl){
                 if(RotateMotor.getCurrentPosition()<-1200 && RotateMotor.getCurrentPosition()>-1400){
                     SlideMotor.setTargetPosition(-3150);
@@ -145,6 +157,8 @@ public class MacTeleOpFOC extends LinearOpMode {
                     RotateMotor.setPower(0.75);
                 }
             }
+
+            //X Home
             if(gamepad2.x && !isexitarm && !isexitsl){
                 if(SlideMotor.getCurrentPosition()>-100){
                     RotateMotor.setTargetPosition(0);
@@ -157,6 +171,8 @@ public class MacTeleOpFOC extends LinearOpMode {
                     wrist.setPosition(0.1);
                 }
             }
+
+            //A Pick up
             if(gamepad2.a && !isexitarm && !isexitsl){
                 RotateMotor.setTargetPosition(-470);
                 RotateMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
@@ -165,24 +181,8 @@ public class MacTeleOpFOC extends LinearOpMode {
                 outtaked=false;
                 wrist.setPosition(0);
             }
-            /*
-            if(gamepad2.b && !isexitarm && !isexitsl){
-                RotateMotor.setTargetPosition(-1500);
-                RotateMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                RotateMotor.setPower(0.6);
-                SlideMotor.setTargetPosition(-2300);
-                SlideMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                SlideMotor.setPower(0.6);
-            }
-            if(gamepad2.a && !isexitarm && !isexitsl){
-                RotateMotor.setTargetPosition(-1800);
-                RotateMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                RotateMotor.setPower(0.6);
-                SlideMotor.setTargetPosition(-2000);
-                SlideMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                SlideMotor.setPower(0.6);
-            }
-            */
+
+            //Intake-Outtake
             if(gamepad2.left_bumper){
                 intake.setPosition(0);
                 outtaked=true;
@@ -194,21 +194,26 @@ public class MacTeleOpFOC extends LinearOpMode {
                     intake.setPosition(0.5);
                 }
             }
+
+            //Calibrate IMU
             if (gamepad1.a) {
                 imu.resetYaw();
             }
 
+            //Set Mecanum Wheels Speed
             frontLeftMotor.setPower(frontLeftPower);
             backLeftMotor.setPower(backLeftPower);
             frontRightMotor.setPower(frontRightPower);
             backRightMotor.setPower(backRightPower);
+
+            //Wrist Controlling
             if(rt>0 && wrist.getPosition()<0.465){
                 wrist.setPosition(wrist.getPosition()+0.015);
             } else if (gamepad2.right_bumper) {
                 wrist.setPosition(wrist.getPosition()-0.02);
             }
 
-            //Check if in RUN_TO_POSITION
+            //Hold Current, Arm Driving and Limits
             if (roty > 0 || roty < 0){
                 RotateMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
@@ -224,12 +229,14 @@ public class MacTeleOpFOC extends LinearOpMode {
                 }
                 isexitarm=true;
             }else if (isexitarm && roty==0){
+                //Switch to Hold Current mode
                 RotateMotor.setTargetPosition(position);
                 RotateMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                 RotateMotor.setPower(0.6);
                 isexitarm=false;
             }
 
+            //Hold Current, Slide Driving and Limits
             if (ry2 > 0 || ry2 < 0){
                 SlideMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
@@ -245,12 +252,16 @@ public class MacTeleOpFOC extends LinearOpMode {
                 }
                 isexitsl=true;
             }else if (isexitsl && ry2==0){
+                //Switch to Hold Current mode
                 SlideMotor.setTargetPosition(positionsl);
                 SlideMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                 SlideMotor.setPower(0.6);
                 isexitsl=false;
             }
 
+            //Telemetry Stuff
+
+            //Telemetry value rounding
             String rot = String.format("%.7f",rotY);
             String fL = String.format("%.4f",frontLeftPower);
             String bL = String.format("%.4f",backLeftPower);
@@ -258,6 +269,8 @@ public class MacTeleOpFOC extends LinearOpMode {
             String bR = String.format("%.4f",backRightPower);
             String sl = String.format("%.7f",ry2);
             String bh = String.format("%.7f",botHeading);
+
+            //Telemetry Output
             telemetry.addLine("======== TeleOp Telemetry ========");
             telemetry.addLine("-------------Driving-------------");
             telemetry.addLine("frontLeft: "+fL+" frontRight: "+fR);
