@@ -137,24 +137,24 @@ public class MacTeleOpFOC extends LinearOpMode {
                 if(RotateMotor.getCurrentPosition()<-1200 && RotateMotor.getCurrentPosition()>-1400){
                     SlideMotor.setTargetPosition(-3150);
                     SlideMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                    SlideMotor.setPower(0.85);
-                    wrist.setPosition(0.41);
+                    SlideMotor.setPower(1);
+                    wrist.setPosition(0.275);
                 } else {
-                    RotateMotor.setTargetPosition(-1300);
+                    RotateMotor.setTargetPosition(-1230);
                     RotateMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                    RotateMotor.setPower(0.7);
+                    RotateMotor.setPower(0.75);
                 }
             }
             if(gamepad2.x && !isexitarm && !isexitsl){
                 if(SlideMotor.getCurrentPosition()>-100){
                     RotateMotor.setTargetPosition(0);
                     RotateMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                    RotateMotor.setPower(0.7);
+                    RotateMotor.setPower(0.75);
                     wrist.setPosition(0.1);
                 } else {
                     SlideMotor.setTargetPosition(0);
                     SlideMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                    SlideMotor.setPower(0.85);
+                    SlideMotor.setPower(1);
                 }
             }
             /*
@@ -194,9 +194,9 @@ public class MacTeleOpFOC extends LinearOpMode {
             backLeftMotor.setPower(backLeftPower);
             frontRightMotor.setPower(frontRightPower);
             backRightMotor.setPower(backRightPower);
-            if(rt>0 && wrist.getPosition()<0.65){
+            if(rt>0 && wrist.getPosition()<0.465){
                 wrist.setPosition(wrist.getPosition()+0.015);
-            } else if (gamepad2.right_bumper && wrist.getPosition()<0.7) {
+            } else if (gamepad2.right_bumper) {
                 wrist.setPosition(wrist.getPosition()-0.02);
             }
 
