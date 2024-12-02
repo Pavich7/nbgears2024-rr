@@ -150,12 +150,20 @@ public class MacTeleOpFOC extends LinearOpMode {
                     RotateMotor.setTargetPosition(0);
                     RotateMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                     RotateMotor.setPower(0.75);
-                    wrist.setPosition(0.1);
                 } else {
                     SlideMotor.setTargetPosition(0);
                     SlideMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                     SlideMotor.setPower(1);
+                    wrist.setPosition(0.1);
                 }
+            }
+            if(gamepad2.a && !isexitarm && !isexitsl){
+                RotateMotor.setTargetPosition(-470);
+                RotateMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                RotateMotor.setPower(0.75);
+                intake.setPosition(1);
+                outtaked=false;
+                wrist.setPosition(0);
             }
             /*
             if(gamepad2.b && !isexitarm && !isexitsl){
