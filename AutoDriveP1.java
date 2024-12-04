@@ -41,6 +41,8 @@ public class AutoDriveP1 extends LinearOpMode {
             arm.setDirection(DcMotorSimple.Direction.REVERSE);
             wrist = hardwareMap.get(Servo.class, "wrist");
             intake = hardwareMap.get(Servo.class, "intake");
+            lift.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+            arm.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         }
 
         public class LiftUp implements Action {
@@ -146,10 +148,10 @@ public class AutoDriveP1 extends LinearOpMode {
         Lift lift = new Lift(hardwareMap);
 
         TrajectoryActionBuilder tab1 = drive.actionBuilder(initialPose)
-                .strafeTo(new Vector2d(8, -46))
-                .waitSeconds(0.5);
+                .strafeTo(new Vector2d(8, -46));
+                //.waitSeconds(0.5);
         Action trajectoryActionCloseOut = tab1.endTrajectory().fresh()
-                .waitSeconds(0.5)
+                //.waitSeconds(0.5)
                 //Go to push point and turn
                 .strafeTo(new Vector2d(8, -46))
                 .strafeTo(new Vector2d(55, -46))
