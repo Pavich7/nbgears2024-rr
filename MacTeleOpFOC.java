@@ -15,6 +15,8 @@ import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 public class MacTeleOpFOC extends LinearOpMode {
     public Servo wrist;
     public Servo intake;
+    //public Servo cls1;
+    //public Servo cls2;
     @Override
     public void runOpMode() throws InterruptedException {
         IMU imu = hardwareMap.get(IMU.class, "imu");
@@ -32,12 +34,16 @@ public class MacTeleOpFOC extends LinearOpMode {
         TouchSensor slideTouch = hardwareMap.touchSensor.get("slideTouch");
         wrist = hardwareMap.get(Servo.class, "wrist");
         intake = hardwareMap.get(Servo.class, "intake");
+        //cls1 = hardwareMap.get(Servo.class, "cls1");
+        //cls2 = hardwareMap.get(Servo.class, "cls2");
         //Reset Encoder
         RotateMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         RotateMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         SlideMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         SlideMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         wrist.setPosition(0.35);
+        //cls1.setPosition(0);
+        //cls2.setPosition(0);
         //Slide Homing
         boolean InitSlideTouchPressed = !slideTouch.isPressed();
         while(!InitSlideTouchPressed){
@@ -64,30 +70,30 @@ public class MacTeleOpFOC extends LinearOpMode {
             telemetry.addLine("Init Arm: Status: "+InitArmTouchPressed);
             telemetry.update();
         }
-        
+
         //Reset Slide Encoder
         SlideMotor.setPower(0);
         SlideMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         SlideMotor.setTargetPosition(0);
         SlideMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         SlideMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        
+
         //Reset Arm Encoder
         RotateMotor.setPower(0);
         RotateMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         RotateMotor.setTargetPosition(0);
         RotateMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         RotateMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        
+
         //End reset Encoder
-        
+
         imu.resetYaw();
         telemetry.addLine("Initial homing processes completed!");
         telemetry.addLine("Init Slide: Status: OK");
         telemetry.addLine("Init Arm: Status: OK");
         telemetry.addLine("Robot is now ready.");
         telemetry.update();
-        
+
         boolean isexitarm = false;
         boolean isexitsl = false;
         boolean outtaked = false;
@@ -101,13 +107,13 @@ public class MacTeleOpFOC extends LinearOpMode {
         if (isStopRequested()) return;
 
         while (opModeIsActive()) {
-            
+
             //Realtime Encoder and Limit Switch data
             int position = RotateMotor.getCurrentPosition();
             int positionsl = SlideMotor.getCurrentPosition();
             boolean ArmTouchPressed = armTouch.isPressed();
             boolean SlideTouchPressed = !slideTouch.isPressed();
-            
+
             //Input value from joystick
             double y = -gamepad1.left_stick_y * 0.9; //Forward Backward
             double x = gamepad1.left_stick_x * 0.9; //Left Right
@@ -128,7 +134,7 @@ public class MacTeleOpFOC extends LinearOpMode {
             double botHeading = imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS);
             double rotX = x * Math.cos(-botHeading) - y * Math.sin(-botHeading);
             double rotY = x * Math.sin(-botHeading) + y * Math.cos(-botHeading);
-            
+
             //Some Tuning?
             rotX = rotX * 1.1;
 
@@ -194,6 +200,17 @@ public class MacTeleOpFOC extends LinearOpMode {
                     intake.setPosition(0.5);
                 }
             }
+
+            //Climber Support (Disabled)
+            /*
+            if(gamepad2.dpad_up){
+                cls1.setPosition(0);
+                cls2.setPosition(0);
+            }else if(gamepad2.dpad_down){
+                cls1.setPosition(1);
+                cls2.setPosition(1);
+            }
+             */
 
             //Calibrate IMU
             if (gamepad1.a) {
@@ -282,6 +299,7 @@ public class MacTeleOpFOC extends LinearOpMode {
             telemetry.addLine("-------------Gripper-------------");
             telemetry.addLine("Wrist setPosition: "+wrist.getPosition());
             telemetry.addLine("Intake setPosition: "+intake.getPosition());
+            //telemetry.addLine("Climber setPosition: "+cls1.getPosition());
             telemetry.addLine("-------------Encoder-------------");
             telemetry.addLine("Arm Encoder Position: "+position);
             telemetry.addLine("Slide Encoder Position: "+positionsl);
