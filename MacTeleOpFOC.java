@@ -115,11 +115,11 @@ public class MacTeleOpFOC extends LinearOpMode {
             boolean SlideTouchPressed = !slideTouch.isPressed();
 
             //Input value from joystick
-            double y = -gamepad1.left_stick_y * 0.9; //Forward Backward
-            double x = gamepad1.left_stick_x * 0.9; //Left Right
+            double y = -gamepad1.left_stick_y * 0.95; //Forward Backward
+            double x = gamepad1.left_stick_x * 0.95; //Left Right
             double rx = gamepad1.right_stick_x * 0.5; //Rotate
             double roty = gamepad2.left_stick_y * 0.5; //Arm
-            double ry2 = gamepad2.right_stick_y * 0.85; //Slide
+            double ry2 = gamepad2.right_stick_y * 0.9; //Slide
             double lt = gamepad2.left_trigger;
             double rt = gamepad2.right_trigger;
 
