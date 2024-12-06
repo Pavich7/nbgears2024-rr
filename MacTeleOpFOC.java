@@ -264,6 +264,8 @@ public class MacTeleOpFOC extends LinearOpMode {
                     SlideMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
                 }else if (positionsl<-3150 && ry2 < 0) {
                     SlideMotor.setPower(0);
+                }else if(positionsl<-2280 && ry2 < 0 && armTouch.isPressed()){
+                    SlideMotor.setPower(0);
                 }else{
                     SlideMotor.setPower(ry2);
                 }
