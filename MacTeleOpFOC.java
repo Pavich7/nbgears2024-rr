@@ -115,11 +115,11 @@ public class MacTeleOpFOC extends LinearOpMode {
             boolean SlideTouchPressed = !slideTouch.isPressed();
 
             //Input value from joystick
-            double y = -gamepad1.left_stick_y * 0.95; //Forward Backward
-            double x = gamepad1.left_stick_x * 0.95; //Left Right
+            double y = -gamepad1.left_stick_y * 1; //Forward Backward
+            double x = gamepad1.left_stick_x * 1; //Left Right
             double rx = gamepad1.right_stick_x * 0.5; //Rotate
             double roty = gamepad2.left_stick_y * 0.5; //Arm
-            double ry2 = gamepad2.right_stick_y * 0.9; //Slide
+            double ry2 = gamepad2.right_stick_y * 0.95; //Slide
             double lt = gamepad2.left_trigger;
             double rt = gamepad2.right_trigger;
 
@@ -180,12 +180,18 @@ public class MacTeleOpFOC extends LinearOpMode {
 
             //A Pick up
             if(gamepad2.a && !isexitarm && !isexitsl){
-                RotateMotor.setTargetPosition(-470);
-                RotateMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                RotateMotor.setPower(0.75);
-                intake.setPosition(1);
-                outtaked=false;
-                wrist.setPosition(0);
+                if(SlideMotor.getCurrentPosition()<-100){
+                    SlideMotor.setTargetPosition(-100);
+                    SlideMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                    SlideMotor.setPower(1);
+                } else {
+                    RotateMotor.setTargetPosition(-540);
+                    RotateMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                    RotateMotor.setPower(0.75);
+                    intake.setPosition(1);
+                    outtaked=false;
+                    wrist.setPosition(0);
+                }
             }
 
             //Intake-Outtake
