@@ -119,7 +119,7 @@ public class MacTeleOpFOC extends LinearOpMode {
             double x = gamepad1.left_stick_x * 1; //Left Right
             double rx = gamepad1.right_stick_x * 0.5; //Rotate
             double roty = gamepad2.left_stick_y * 0.5; //Arm
-            double ry2 = gamepad2.right_stick_y * 0.95; //Slide
+            double ry2 = gamepad2.right_stick_y * 1; //Slide
             double lt = gamepad2.left_trigger;
             double rt = gamepad2.right_trigger;
 
@@ -270,7 +270,7 @@ public class MacTeleOpFOC extends LinearOpMode {
                     SlideMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
                 }else if (positionsl<-3150 && ry2 < 0) {
                     SlideMotor.setPower(0);
-                }else if(positionsl<-2280 && ry2 < 0 && armTouch.isPressed()){
+                }else if(positionsl<-2280 && ry2 < 0 && position>-300){
                     SlideMotor.setPower(0);
                 }else{
                     SlideMotor.setPower(ry2);
