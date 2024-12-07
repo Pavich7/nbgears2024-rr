@@ -234,17 +234,17 @@ public class AutoDriveP2 extends LinearOpMode {
                 .strafeTo(new Vector2d(-48, -40));
         TrajectoryActionBuilder tab4 = tab3.endTrajectory().fresh()
                 .waitSeconds(0.5)
-                .splineTo(new Vector2d(-55, -70), Math.toRadians(215));
+                .splineTo(new Vector2d(-55, -70), Math.toRadians(223));
         TrajectoryActionBuilder tab5 = tab4.endTrajectory().fresh()
                 .waitSeconds(0.5)
                 .strafeTo(new Vector2d(-50, -60));
         Action trajectoryActionCloseOut = tab5.endTrajectory().fresh()
-                .turn(Math.toRadians(-36))
+                .turn(Math.toRadians(-45))
                 .strafeTo(new Vector2d(-50, -5))
                 .strafeTo(new Vector2d(-57, -5))
                 .strafeTo(new Vector2d(-57, -62))
                 .strafeTo(new Vector2d(-57, -5))
-                .strafeTo(new Vector2d(-32, -5))
+                .strafeTo(new Vector2d(-32, -3))
                 .build();
 
         waitForStart();
