@@ -130,6 +130,14 @@ public class MacTeleOpFOC extends LinearOpMode {
                 rx=0.25;
             }
 
+            //Damn Spinning
+            if(gamepad1.b && SlideMotor.getCurrentPosition()>-50 && RotateMotor.getCurrentPosition()>-20 && wrist.getPosition()>0.3){
+                rx=1;
+            }
+            if(gamepad1.x && SlideMotor.getCurrentPosition()>-50 && RotateMotor.getCurrentPosition()>-20 && wrist.getPosition()>0.3){
+                rx=-1;
+            }
+
             //FOC Driving
             double botHeading = imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS);
             double rotX = x * Math.cos(-botHeading) - y * Math.sin(-botHeading);
