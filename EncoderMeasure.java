@@ -11,7 +11,7 @@ import com.qualcomm.robotcore.hardware.TouchSensor;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 
-@TeleOp(name = "Measurement (Encoder)")
+@TeleOp(name = "Measurement & Self Test")
 public class EncoderMeasure extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
@@ -19,6 +19,8 @@ public class EncoderMeasure extends LinearOpMode {
         DcMotor SlideMotor = hardwareMap.get(DcMotorEx.class, "SliMot");
         TouchSensor armTouch = hardwareMap.touchSensor.get("armTouch");
         TouchSensor slideTouch = hardwareMap.touchSensor.get("slideTouch");
+        telemetry.addLine("Testing started.");
+        telemetry.update();
         //Reset Encoder
         RotateMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         RotateMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
@@ -29,34 +31,58 @@ public class EncoderMeasure extends LinearOpMode {
         while(!InitSlideTouchPressed){
             SlideMotor.setPower(0.3);
             InitSlideTouchPressed = !slideTouch.isPressed();
-            telemetry.addLine("Init Slide: Status: "+InitSlideTouchPressed);
-            telemetry.addLine("Init Arm: Status: Pending...");
+            telemetry.addLine("(1/5) Init Slide: Status: "+InitSlideTouchPressed);
             telemetry.update();
         }
         boolean InitArmTouchPressed = armTouch.isPressed();
         while(!InitArmTouchPressed){
             RotateMotor.setPower(0.2);
             InitArmTouchPressed = armTouch.isPressed();
-            telemetry.addLine("Init Slide: Status: OK");
-            telemetry.addLine("Init Arm: Status: "+InitArmTouchPressed);
+            telemetry.addLine("(2/5) Init Arm: Status: "+InitArmTouchPressed);
             telemetry.update();
         }
 
         SlideMotor.setPower(0);
+        RotateMotor.setPower(0);
         SlideMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        RotateMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+
+        SlideMotor.setTargetPosition(-300);
+        SlideMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        SlideMotor.setPower(0.2);
+
+        while (SlideMotor.getCurrentPosition() > -280){
+            telemetry.addLine("(3/5) Testing Slide...");
+            telemetry.update();
+        }
+
+        RotateMotor.setTargetPosition(-250);
+        RotateMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        RotateMotor.setPower(0.2);
+
+        while (RotateMotor.getCurrentPosition() > -230){
+            telemetry.addLine("(4/5) Testing Arm...");
+            telemetry.update();
+        }
+
         SlideMotor.setTargetPosition(0);
         SlideMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        SlideMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-
-        RotateMotor.setPower(0);
-        RotateMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        SlideMotor.setPower(0.3);
         RotateMotor.setTargetPosition(0);
         RotateMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        RotateMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        RotateMotor.setPower(0.2);
+
+        while (!armTouch.isPressed() || slideTouch.isPressed()){
+            telemetry.addLine("(5/5) Testing Limits...");
+            telemetry.update();
+        }
+
+        SlideMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        RotateMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+
         //End reset Encoder
-        telemetry.addLine("Init Slide: Status: OK");
-        telemetry.addLine("Init Arm: Status: OK");
-        telemetry.addLine("Robot Ready.");
+        telemetry.addLine("Testing Completed!");
+        telemetry.addLine("Ready for measurement.");
         telemetry.update();
 
         waitForStart();
