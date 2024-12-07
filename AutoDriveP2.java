@@ -1,4 +1,6 @@
 package org.firstinspires.ftc.teamcode;
+import android.os.SystemClock;
+
 import androidx.annotation.NonNull;
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
@@ -32,6 +34,7 @@ public class AutoDriveP2 extends LinearOpMode {
         double stage2 = 1;
         double chk3 = 0;
         double stage3 = 1;
+        double tt = 0;
         TouchSensor slideTouch = hardwareMap.touchSensor.get("slideTouch");
         TouchSensor armTouch = hardwareMap.touchSensor.get("armTouch");
         public Lift(HardwareMap hardwareMap) {
@@ -176,8 +179,7 @@ public class AutoDriveP2 extends LinearOpMode {
                     stage3 = 2;
                 } else if (stage3==2){
                     if (armpos>970){
-                        wrist.setPosition(0);
-                        lift.setTargetPosition(3175);
+                        lift.setTargetPosition(3185);
                         lift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                         lift.setPower(1);
                         telemetry.addLine("Stage2 liftUp2 action!");
@@ -187,9 +189,23 @@ public class AutoDriveP2 extends LinearOpMode {
                         stage3 = 3;
                     }
                 } else if (stage3==3){
-                    if (slpos>3150) {
+                    if (slpos>3170) {
+                        wrist.setPosition(0);
+                        tt = SystemClock.uptimeMillis();
+                        while (SystemClock.uptimeMillis() - tt < 1000){
+                            telemetry.addLine("Stage3 liftUp2 action!");
+                        }
                         intake.setPosition(0);
-                        telemetry.addLine("Stage3 liftUp2 action!");
+                        tt = SystemClock.uptimeMillis();
+                        while (SystemClock.uptimeMillis() - tt < 500){
+                            telemetry.addLine("Stage4 liftUp2 action!");
+                        }
+                        wrist.setPosition(0.4);
+                        tt = SystemClock.uptimeMillis();
+                        while (SystemClock.uptimeMillis() - tt < 250){
+                            telemetry.addLine("Stage6 liftUp2 action!");
+                        }
+                        telemetry.addLine("Stage4 liftUp2 action!");
                         telemetry.update();
                         chk3=lift.getCurrentPosition();
                     }
@@ -236,7 +252,7 @@ public class AutoDriveP2 extends LinearOpMode {
                 .waitSeconds(0.5)
                 .splineTo(new Vector2d(-55, -70), Math.toRadians(223));
         TrajectoryActionBuilder tab5 = tab4.endTrajectory().fresh()
-                .waitSeconds(0.5)
+                //.waitSeconds(0.5)
                 .strafeTo(new Vector2d(-50, -60));
         Action trajectoryActionCloseOut = tab5.endTrajectory().fresh()
                 .turn(Math.toRadians(-45))
