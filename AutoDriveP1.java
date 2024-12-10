@@ -148,26 +148,26 @@ public class AutoDriveP1 extends LinearOpMode {
         Lift lift = new Lift(hardwareMap);
 
         TrajectoryActionBuilder tab1 = drive.actionBuilder(initialPose)
-                .strafeTo(new Vector2d(8, -46));
+                .strafeTo(new Vector2d(8, -44));
                 //.waitSeconds(0.5);
         Action trajectoryActionCloseOut = tab1.endTrajectory().fresh()
                 //.waitSeconds(0.5)
                 //Go to push point and turn
-                .strafeTo(new Vector2d(8, -46))
-                .strafeTo(new Vector2d(55, -46))
+                .strafeTo(new Vector2d(8, -44))
+                .strafeTo(new Vector2d(55, -44))
                 .strafeTo(new Vector2d(55, -26))
                 .turn(Math.toRadians(-90))
                 //Sample Push 1
                 .strafeTo(new Vector2d(55, -26))
-                .strafeTo(new Vector2d(55, -90))
+                .strafeTo(new Vector2d(55, -100))
                 .strafeTo(new Vector2d(55, -26))
                 //Sample Push 2
                 .strafeTo(new Vector2d(65, -26))
-                .strafeTo(new Vector2d(65, -90))
+                .strafeTo(new Vector2d(65, -100))
                 .strafeTo(new Vector2d(65, -26))
                 //Sample Push 3
                 .strafeTo(new Vector2d(72.5, -26))
-                .strafeTo(new Vector2d(72.5, -95))
+                .strafeTo(new Vector2d(72.5, -100))
                 .turn(Math.toRadians(90))
                 .build();
 
