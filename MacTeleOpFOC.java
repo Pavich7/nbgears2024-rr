@@ -193,7 +193,7 @@ public class MacTeleOpFOC extends LinearOpMode {
                     SlideMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                     SlideMotor.setPower(1);
                 } else {
-                    RotateMotor.setTargetPosition(-540);
+                    RotateMotor.setTargetPosition(-600);
                     RotateMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                     RotateMotor.setPower(0.75);
                     intake.setPosition(1);
