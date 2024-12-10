@@ -41,7 +41,7 @@ public class MacTeleOpFOC extends LinearOpMode {
         RotateMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         SlideMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         SlideMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        wrist.setPosition(0.35);
+        wrist.setPosition(0.65);
         //cls1.setPosition(0);
         //cls2.setPosition(0);
         //Slide Homing
