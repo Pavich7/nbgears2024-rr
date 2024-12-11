@@ -253,7 +253,7 @@ public class MacTeleOpFOC extends LinearOpMode {
                     RotateMotor.setPower(0);
                     RotateMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
                     RotateMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-                }else if (position<-1800 && roty < 0) {
+                }else if (position<-1300 && roty < 0) {
                     RotateMotor.setPower(0);
                 }else{
                     RotateMotor.setPower(roty);
@@ -261,7 +261,11 @@ public class MacTeleOpFOC extends LinearOpMode {
                 isexitarm=true;
             }else if (isexitarm && roty==0){
                 //Switch to Hold Current mode
-                RotateMotor.setTargetPosition(position);
+                if(position<-1400){
+                    RotateMotor.setTargetPosition(-1400);
+                } else {
+                    RotateMotor.setTargetPosition(position);
+                }
                 RotateMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                 RotateMotor.setPower(0.6);
                 isexitarm=false;
@@ -278,7 +282,7 @@ public class MacTeleOpFOC extends LinearOpMode {
                     SlideMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
                 }else if (positionsl<-3150 && ry2 < 0) {
                     SlideMotor.setPower(0);
-                }else if(positionsl<-2280 && ry2 < 0 && position>-300){
+                }else if(positionsl<-2200 && ry2 < 0 && position>-300){
                     SlideMotor.setPower(0);
                 }else{
                     SlideMotor.setPower(ry2);
@@ -295,7 +299,7 @@ public class MacTeleOpFOC extends LinearOpMode {
             //Telemetry Stuff
 
             //Telemetry value rounding
-            String rot = String.format("%.7f",rotY);
+            String rot = String.format("%.7f",roty);
             String fL = String.format("%.4f",frontLeftPower);
             String bL = String.format("%.4f",backLeftPower);
             String fR = String.format("%.4f",frontRightPower);
