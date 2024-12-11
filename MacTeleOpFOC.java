@@ -238,7 +238,7 @@ public class MacTeleOpFOC extends LinearOpMode {
             backRightMotor.setPower(backRightPower);
 
             //Wrist Controlling
-            if(rt>0 && wrist.getPosition()<0.465){
+            if(rt>0 && wrist.getPosition()<0.275){
                 wrist.setPosition(wrist.getPosition()+0.015);
             } else if (gamepad2.right_bumper) {
                 wrist.setPosition(wrist.getPosition()-0.02);
@@ -253,7 +253,7 @@ public class MacTeleOpFOC extends LinearOpMode {
                     RotateMotor.setPower(0);
                     RotateMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
                     RotateMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-                }else if (position<-1250 && roty < 0) {
+                }else if (position<-1200 && roty < 0) {
                     RotateMotor.setPower(0);
                 }else{
                     RotateMotor.setPower(roty);
@@ -261,8 +261,8 @@ public class MacTeleOpFOC extends LinearOpMode {
                 isexitarm=true;
             }else if (isexitarm && roty==0){
                 //Switch to Hold Current mode
-                if(position<-1300){
-                    RotateMotor.setTargetPosition(-1300);
+                if(position<-1230){
+                    RotateMotor.setTargetPosition(-1230);
                 } else {
                     RotateMotor.setTargetPosition(position);
                 }
@@ -282,7 +282,7 @@ public class MacTeleOpFOC extends LinearOpMode {
                     SlideMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
                 }else if (positionsl<-3150 && ry2 < 0) {
                     SlideMotor.setPower(0);
-                }else if(positionsl<-1500 && ry2 < 0 && position>-500){
+                }else if(positionsl<-1450 && ry2 < 0 && position>-500){
                     SlideMotor.setPower(0);
                 }else{
                     SlideMotor.setPower(ry2);
