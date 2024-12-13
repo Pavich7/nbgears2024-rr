@@ -242,25 +242,26 @@ public class AutoDriveP2 extends LinearOpMode {
         Lift lift = new Lift(hardwareMap);
 
         TrajectoryActionBuilder tab1 = drive.actionBuilder(initialPose)
+                .waitSeconds(3.5)
                 .strafeTo(new Vector2d(15, -44));
         TrajectoryActionBuilder tab2 = tab1.endTrajectory().fresh()
-                .strafeTo(new Vector2d(-48, -55));
+                .strafeTo(new Vector2d(-48, -60));
         TrajectoryActionBuilder tab3 = tab2.endTrajectory().fresh()
-                .waitSeconds(0.5)
+                .waitSeconds(0.75)
                 .strafeTo(new Vector2d(-48, -40));
         TrajectoryActionBuilder tab4 = tab3.endTrajectory().fresh()
                 .waitSeconds(0.5)
-                .splineTo(new Vector2d(-55, -71), Math.toRadians(223));
+                .splineTo(new Vector2d(-57, -73), Math.toRadians(223));
         TrajectoryActionBuilder tab5 = tab4.endTrajectory().fresh()
                 //.waitSeconds(0.5)
                 .strafeTo(new Vector2d(-50, -60));
         Action trajectoryActionCloseOut = tab5.endTrajectory().fresh()
                 .turn(Math.toRadians(-45))
                 .strafeTo(new Vector2d(-50, -5))
-                .strafeTo(new Vector2d(-57, -5))
-                .strafeTo(new Vector2d(-57, -62))
-                .strafeTo(new Vector2d(-57, -5))
-                .strafeTo(new Vector2d(-32, -3))
+                .strafeTo(new Vector2d(-58, -5))
+                .strafeTo(new Vector2d(-59, -70))
+                //.strafeTo(new Vector2d(-57, -5))
+                //.strafeTo(new Vector2d(-32, -3))
                 .build();
 
         waitForStart();
